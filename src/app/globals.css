@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   PATRIOT SAILING — design tokens
+   Palette: deep ocean blue + a warm sunset (coral/amber) accent + sailcloth.
+   Two themes (light default, dark override). "Cinema" tokens (ink/abyss/
+   sail) stay dark in BOTH themes — the photographic bands are always dusk.
+   ========================================================================= */
+@theme {
+  /* --- theme-flipping surface + text (light values here) --- */
+  --color-canvas: #f1ece4;
+  --color-panel: #fbf8f2;
+  --color-fg: #14222f;
+  --color-fg-muted: #5b6b76;
+  --color-line: #e4ded3;
+
+  /* --- accent: sunset coral / amber (light-theme values) --- */
+  --color-accent: #cf5f2c;
+  --color-accent-bright: #e07a41;
+  --color-on-accent: #24100a;
+  --color-signal: #c0442f;
+
+  /* --- cinema: always-dusk ocean blue (fixed across themes) --- */
+  --color-abyss: #061826;
+  --color-ink: #0a2336;
+  --color-deep: #103752;
+  --color-harbor: #1c5c7e;
+  --color-sail: #eef2f4;
+  --color-mist: #a0b4c2;
+
+  --font-display: var(--font-hanken);
+  --font-sans: var(--font-hanken);
+
+  --shadow-lift: 0 1px 2px rgba(2, 12, 14, 0.26), 0 26px 60px -30px rgba(2, 12, 14, 0.55);
+}
+
+/* dark theme — explicit choice, and system default when no explicit light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-canvas: #0a2336;
+    --color-panel: #113452;
+    --color-fg: #eef2f4;
+    --color-fg-muted: #a0b4c2;
+    --color-line: color-mix(in srgb, #eef2f4 13%, transparent);
+    --color-accent: #f0864c;
+    --color-accent-bright: #f8a670;
+    --color-on-accent: #26100a;
+  }
+}
+:root[data-theme="dark"] {
+  --color-canvas: #0a2336;
+  --color-panel: #113452;
+  --color-fg: #eef2f4;
+  --color-fg-muted: #a0b4c2;
+  --color-line: color-mix(in srgb, #eef2f4 13%, transparent);
+  --color-accent: #f0864c;
+  --color-accent-bright: #f8a670;
+  --color-on-accent: #26100a;
+}
+
+/* ---------------------------------------------------------------- base --- */
+@layer base {
+  :root {
+    --gutter: clamp(1.25rem, 5vw, 5rem);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  ::selection { background: var(--color-accent); color: var(--color-on-accent); }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), "Helvetica Neue", Arial, sans-serif;
+    font-weight: 550;
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-bright);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  img { max-width: 100%; }
+
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: var(--color-abyss); }
+  ::-webkit-scrollbar-thumb { background: #1a4d6e; border-radius: 20px; border: 3px solid var(--color-abyss); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-harbor); }
+}
+
+/* --------------------------------------------------------- utilities --- */
+@layer utilities {
+  .shell { width: 100%; margin-inline: auto; max-width: 90rem; padding-inline: var(--gutter); }
+  .measure { max-width: 40rem; }
+  .measure-wide { max-width: 52rem; }
+
+  .eyebrow {
+    font-family: var(--font-sans), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-weight: 600;
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .t-mega { font-size: clamp(3.25rem, 12vw, 11rem); line-height: 0.9; letter-spacing: -0.025em; }
+  .t-display { font-size: clamp(2.6rem, 7vw, 6rem); line-height: 0.98; letter-spacing: -0.02em; }
+  .t-title { font-size: clamp(2rem, 4.4vw, 3.5rem); line-height: 1.02; letter-spacing: -0.015em; }
+  .t-head { font-size: clamp(1.65rem, 2.9vw, 2.5rem); line-height: 1.1; letter-spacing: -0.01em; }
+
+  /* 3D scene helpers for scroll choreography */
+  .scene { perspective: 1200px; perspective-origin: 50% 40%; }
+  .scene-deep { perspective: 1800px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+
+  /* film grain — subtle cinematic texture */
+  .grain-layer {
+    position: fixed; inset: 0; z-index: 60; pointer-events: none;
+    opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  :root[data-theme="light"] .grain-layer { opacity: 0.03; mix-blend-mode: multiply; }
+
+  .feather-b { -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%); mask-image: linear-gradient(to bottom, #000 62%, transparent 100%); }
+}
+
+/* ---------------------------------------------------------- keyframes --- */
+@keyframes ps-sway { 0%,100%{transform:translateY(0) rotate(-0.5deg)} 50%{transform:translateY(-8px) rotate(0.5deg)} }
+.anim-sway { animation: ps-sway 9s ease-in-out infinite; }
+
+/* smooth per-page entrance (App Router template re-mounts on navigation) */
+@keyframes ps-page-in { from { opacity: 0 } to { opacity: 1 } }
+.page-enter { animation: ps-page-in 0.55s ease both; }
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-sway { animation: none !important; }
+  .page-enter { animation: none !important; }
+  * , *::before, *::after { transition-duration: 0.001ms !important; }
+}
